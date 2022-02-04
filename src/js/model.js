@@ -4,13 +4,13 @@
 import { getJSON } from "./helpers";
 
 // We need to our constant variables here from "config.js" file.
-import { API_URL, RES_PER_PAGE } from "./config.js";
+import { API_URL, RES_PER_PAGE } from "./config";
 
 // We have a big state model that contains objects for "recipe", "search" and bookmarks. And then export it to "controller.js" module which acts like a bridge between the "model.js" and "/views/recipeView.js" file.
 export const state = {
     recipe: {},
     search: {
-        query: '',
+        query: "",
         results: [],
         page: 1,
         resultsPerPage: RES_PER_PAGE,
@@ -23,7 +23,7 @@ export const loadRecipe = async function (id) {
     // Handling the errors using "try/catch" block
     try {
         // Using getJSON() function from "helper.js" module
-        const data = await getJSON(`${API_URL}${id}`)
+        const data = await getJSON(`${API_URL}${id}`);
 
         // Reformat the keys of "recipe" object to get rid of snake_case and replace them with camelCase
         const { recipe } = data.data;
@@ -39,7 +39,7 @@ export const loadRecipe = async function (id) {
         };
 
         // To save bookmarks if you switch between recipes
-        if (state.bookmarks.some(bookmark => bookmark.id == id)) {
+        if (state.bookmarks.some(bookmark => bookmark.id === id)) {
             state.recipe.bookmarked = true;
         } else {
             state.recipe.bookmarked = false;
@@ -48,7 +48,7 @@ export const loadRecipe = async function (id) {
         // Temporary error handling
         console.error(`${err} 💥💥💥`);
         // Rethrow the error to handle it in the "controller.js" module
-        throw err
+        throw err;
     }
 };
 
@@ -57,25 +57,23 @@ export const loadSearchResult = async function (query) {
     try {
         state.search.query = query;
 
-        const data = await getJSON(`${API_URL}?search=${query}`)
+        const data = await getJSON(`${API_URL}?search=${query}`);
 
         // Tap into the recipe search array, create a new array where the search result is nicely formatted, and then store it in the state function.
-        state.search.results = data.data.recipes.map(rec => {
-            return {
-                id: rec.id,
-                title: rec.title,
-                publisher: rec.publisher,
-                image: rec.image_url,
-            }
-        })
+        state.search.results = data.data.recipes.map(rec => ({
+            id: rec.id,
+            title: rec.title,
+            publisher: rec.publisher,
+            image: rec.image_url,
+        }));
         state.search.page = 1;
     } catch (err) {
         // Temporary error handling
         console.error(`${err} 💥💥💥`);
         // Rethrow the error to handle it in the "controller.js" module
-        throw err
+        throw err;
     }
-}
+};
 
 // This function is created in the "model.js" module to take in page that we want to render and then returns the results that we actually want to render for that page.
 export const getSearchResultsPage = function (page = state.search.page) {
@@ -91,15 +89,15 @@ export const getSearchResultsPage = function (page = state.search.page) {
 export const updateServings = function (newServings) {
     state.recipe.ingredients.forEach(ing => {
         // Formula: newQuantity = oldQuantity * newServings / oldServing (2 * 8 / 4 = 4)
-        ing.quantity = (ing.quantity * newServings) / state.recipe.servings
+        ing.quantity = (ing.quantity * newServings) / state.recipe.servings;
     });
 
     state.recipe.servings = newServings;
-}
+};
 
 const persistBookmarks = function () {
-    localStorage.setItem("bookmarks", JSON.stringify(state.bookmarks))
-}
+    localStorage.setItem("bookmarks", JSON.stringify(state.bookmarks));
+};
 
 export const addBookmark = function (recipe) {
     // Add bookmark
@@ -128,9 +126,3 @@ const init = function () {
 };
 
 init();
-
-const clearBookmarks = function () {
-    localStorage.clear("bookmarks");
-};
-
-// clearBookmarks();

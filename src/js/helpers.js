@@ -4,10 +4,10 @@ import { TIMEOUT_SEC } from "./config";
 
 // This function returns an error message after loading data for a few seconds. So that our app does not load forever.
 const timeout = function (s) {
-    return new Promise(function (_, reject) {
-        setTimeout(function () {
+    return new Promise((_, reject) => {
+        setTimeout(() => {
             reject(
-                new Error(`Request took too long! Timeout after ${s} second`)
+                new Error(`Request took too long! Timeout after ${s} second`),
             );
         }, s * 1000);
     });
@@ -26,6 +26,7 @@ export const getJSON = async function (url) {
         return data;
     } catch {
         // Rethrow the error to handle it in the "model.js" not in this module
+        // eslint-disable-next-line no-undef
         throw err;
     }
-}
+};
